@@ -1,12 +1,7 @@
 # unittest
 import unittest
-from unittest import result
+from readFile import readFile
 from bresenham import bresenham
-
-def readFile(filename):
-    with open(filename, 'r') as f:
-        lines = f.readlines()
-        return [line.strip() for line in lines]
 
 def formatInput(lines):
     result = []
