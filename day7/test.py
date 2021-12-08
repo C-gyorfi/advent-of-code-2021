@@ -19,12 +19,20 @@ def costOfPosition(crabs, pos):
     return cost
 
 
-def findCheapestCost(crabs):
+def costOfPositionWithIncrease(crabs, pos):
+    keys = list(crabs.keys())
+    cost = 0
+    for key in keys:
+        cost += sum(range(abs(key - pos)+1)) * crabs[key]
+    return cost
+
+
+def findCheapestCost(crabs, calcCost):
     cheapest_cost = float("inf")
     keys = list(crabs.keys())
 
     for i in range(keys[0],keys[-1]+1):
-        cost_for_pos = costOfPosition(crabs, i)        
+        cost_for_pos = calcCost(crabs, i)        
         if cost_for_pos < cheapest_cost:
             cheapest_cost = cost_for_pos
     return cheapest_cost
@@ -40,16 +48,26 @@ class Test(unittest.TestCase):
         result = costOfPosition(crabs, 2)
         self.assertEqual(result, 37)
 
+    def testCostOfPositionWithIncrease(self):
+        crabs = groupCrabs([16,1,2,0,4,2,7,1,2,14])
+        result = costOfPositionWithIncrease(crabs, 5)
+        self.assertEqual(result, 168)
+
     def testFindCheapestCost(self):
         crabs = groupCrabs([16,1,2,0,4,2,7,1,2,14])
-        result = findCheapestCost(crabs)
+        result = findCheapestCost(crabs, costOfPosition)
         self.assertEqual(result, 37)
 
     def testRun(self):
         raw_data = readFile('data')[0].split(',')
         data = [int(x) for x in raw_data]
         crabs = groupCrabs(data)
-        self.assertEqual(findCheapestCost(crabs), 1)
+        self.assertEqual(findCheapestCost(crabs, costOfPosition), 326132)
+
+        raw_data = readFile('data')[0].split(',')
+        data = [int(x) for x in raw_data]
+        crabs = groupCrabs(data)
+        self.assertEqual(findCheapestCost(crabs, costOfPositionWithIncrease), 88612508)
 
 if __name__ == '__main__':
     unittest.main()
