@@ -2,28 +2,27 @@
 import unittest
 from readFile import readFile
 
-def containsChar(char, string):
-    try: return string.index(char)
-    except ValueError:
-        return None
+scores = {
+    ')': 3,
+    ']': 57,
+    '}': 1197,
+    '>': 25137,
+}
 
 def sumCorruptedLines(lines):
     sum = 0
     for line in lines:
         while '()' in line or '[]' in line or '{}' in line or '<>' in line:
-            line = line.replace('()', '')
-            line = line.replace('[]', '')
-            line = line.replace('<>', '')
-            line = line.replace('{}', '')
+            for bp in ['()', '[]', '{}', '<>']:
+                line = line.replace(bp, '')
 
-        badChars = [line.find(')'), line.find(']'), line.find('}'), line.find('>')]
-        badChars = [x for x in badChars if x != -1]
-        if len(badChars) == 0: continue
-        badChars.sort()
-        if line[badChars[0]] == ')': sum += 3
-        elif line[badChars[0]] == ']': sum += 57
-        elif line[badChars[0]] == '}': sum += 1197
-        elif line[badChars[0]] == '>': sum += 25137  
+        indexesOfBadChars = [line.find(')'), line.find(']'), line.find('}'), line.find('>')]
+        indexesOfBadChars = [x for x in indexesOfBadChars if x != -1]
+        if not indexesOfBadChars: continue
+
+        indexesOfBadChars.sort()
+        sum += scores[line[indexesOfBadChars[0]]]
+
     return sum
 
 class Test(unittest.TestCase):
