@@ -43,57 +43,14 @@ def isBoundary(location):
     return (location == 9 or location == None)
 
 def sumAdjacent(grid, current_sum, checked_locations, x, y):
-    if (x,y) in checked_locations: return { 'sum': current_sum, 'checked': checked_locations }
+    if (x,y) in checked_locations or isBoundary(safeAccess(grid, x, y)): return { 'sum': current_sum, 'checked': checked_locations }
     checked_locations.append((x,y))
     current_sum += 1
 
-    # Check left
-    cur_x=x-1
-    pos_value = safeAccess(grid, cur_x, y)
-    pos = (cur_x, y)
-    while not isBoundary(pos_value) or pos in checked_locations:
-        sm  = sumAdjacent(grid, current_sum, checked_locations, cur_x, y)
+    for direction in [(x-1, y), (x+1, y), (x, y+1), (x, y-1)]:
+        sm  = sumAdjacent(grid, current_sum, checked_locations, direction[0], direction[1])
         current_sum = sm['sum']
         checked_locations = sm['checked']
-        cur_x-= 1
-        pos_value = safeAccess(grid, cur_x, y)
-        pos = (cur_x, y)
-
-    # Check right
-    cur_x=x+1
-    pos_value = safeAccess(grid, cur_x, y)
-    pos = (cur_x, y)
-    while not isBoundary(pos_value) or pos in checked_locations:
-        sm  = sumAdjacent(grid, current_sum, checked_locations, cur_x, y)
-        current_sum = sm['sum']
-        checked_locations = sm['checked']
-        cur_x+= 1
-        pos_value = safeAccess(grid, cur_x, y)
-        pos = (cur_x, y)
-    
-    # Check up
-    cur_y=y+1
-    pos_value = safeAccess(grid, x, cur_y)
-    pos = (x, cur_y)
-    while not isBoundary(pos_value) or pos in checked_locations:
-        sm  = sumAdjacent(grid, current_sum, checked_locations, x, cur_y)
-        current_sum = sm['sum']
-        checked_locations = sm['checked']
-        cur_y+= 1
-        pos_value = safeAccess(grid, x, cur_y)
-        pos = (x, cur_y)
-
-    # Check down
-    cur_y=y-1
-    pos_value = safeAccess(grid, x, cur_y)
-    pos = (x, cur_y)
-    while not isBoundary(pos_value) or pos in checked_locations:
-        sm  = sumAdjacent(grid, current_sum, checked_locations, x, cur_y)
-        current_sum = sm['sum']
-        checked_locations = sm['checked']
-        cur_y-= 1
-        pos_value = safeAccess(grid, x, cur_y)
-        pos = (x, cur_y)
 
     return { 'sum': current_sum, 'checked': checked_locations }
 
