@@ -1,5 +1,6 @@
 import unittest
 from readFile import readFile
+import numpy as np
 
 def mapDataToGrid(data):
     grid = []
@@ -35,11 +36,17 @@ def checkAround(x, y, grid, flashed, count):
         result['grid'][y][x] = point+1
     return result
 
+def isAllFlashed(grid):
+    return set(np.array(grid).flatten()) == {0}
 
-def getNumberOfFlashes(grid):
+def checkFlashes(grid, numberOfSteps=100, findStepWhenInSync=False):
     count = 0
     current_grid = grid
-    for _n in range(100):
+    if findStepWhenInSync: numberOfSteps = 999999999999999999
+    for step in range(numberOfSteps):
+        if isAllFlashed(current_grid) and findStepWhenInSync:
+            return step
+
         flashed = []
         for y, row in enumerate(grid):
             for x, _value in enumerate(row):
@@ -50,15 +57,29 @@ def getNumberOfFlashes(grid):
     return count
 
 class Test(unittest.TestCase):
-    def testGetNumberOfFlashes(self):
+    def testCheckFlashes(self):
         data = readFile('test_data')
         grid = mapDataToGrid(data)
-        self.assertEqual(getNumberOfFlashes(grid), 1656)
+        findStepWhenInSync = False
+        self.assertEqual(checkFlashes(grid), 1656)
+
+    def testIsAllFlashed(self):
+        data = ['000', '000', '000']
+        grid = mapDataToGrid(data)
+        self.assertTrue(isAllFlashed(grid))
+
+        data = ['004', '000', '000']
+        grid = mapDataToGrid(data)
+        self.assertFalse(isAllFlashed(grid))
 
     def testRun(self):
         data = readFile('data')
         grid = mapDataToGrid(data)
-        self.assertEqual(getNumberOfFlashes(grid), 1615)
+        self.assertEqual(checkFlashes(grid), 1615)
+        
+        data = readFile('data')
+        grid = mapDataToGrid(data)
+        self.assertEqual(checkFlashes(grid, findStepWhenInSync=True), 249)
 
 if __name__ == '__main__':
     unittest.main()
